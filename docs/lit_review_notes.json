@@ -1,0 +1,88 @@
+{
+  "reference": "docs/Kurdyukova2021Phase.pdf",
+  "table": "../LIT_REVIEW.md",
+  "scope": "Six closely related works. Findings describe the papers; no research-gap claim is made.",
+  "review": "Three agents each read two complete papers; final wording was cross-checked.",
+  "papers": [
+    {
+      "id": "Usmanova2020",
+      "source": "https://m1p.org/papers/Usmanova2020Directional.pdf",
+      "read_version": "Complete eight-page author manuscript; journal typesetting not separately audited.",
+      "sections": "Methods §§2–4; experiments §5; conclusions §6.",
+      "findings": [
+        "Output is a reconstructed trajectory and model complexity, not a per-window movement phase.",
+        "Supplied period supports cycle averaging; spherical angles predict radius after directional reduction.",
+        "Walking/running/electricity complexities are 3/6/8. Reconstruction error matters: running stops intersecting at dimension 4, yet complexity 6 is selected.",
+        "No phase ground truth or held-out phase validation is reported."
+      ]
+    },
+    {
+      "id": "MotrenkoStrijov2016",
+      "source": "https://m1p.org/papers/MotrenkoStrijov2014RV2.pdf",
+      "read_version": "Complete thirteen-page author manuscript marked DRAFT; Table II visually checked. Journal typesetting not separately audited.",
+      "metadata": "Journal issue 2016, 20(6), 1466–1476; first online publication 2015.",
+      "sections": "Algorithm §§IV–V; moving windows §VI.B; results Table II, p.10; limitations p.11.",
+      "findings": [
+        "Selects one consecutive PCA pair, not necessarily leading components; retains one orientation of symmetry-axis crossings.",
+        "Moving blocks span about ten periods; presented processing is not instantaneous causal estimation.",
+        "Table II printed F1 values are internally inconsistent with precision/recall. Type-2 PC: F1=.9953 exceeds (P+R)/2=.9017; separate averaging cannot explain this.",
+        "The exact rank-two argument applies to a pure sinusoid; arbitrary bounded amplitude can generate multiple sideband pairs. The Appendix does not establish its broader claim.",
+        "Self-intersections create extra crossings. Spectral-peak thresholds, reflection-point pairing and overlap reconciliation are not fully specified."
+      ]
+    },
+    {
+      "id": "Jatesiktat2020",
+      "source": "https://doi.org/10.1016/j.asoc.2020.106386",
+      "local_source": "/Users/rknza/Downloads/jatesiktat2020.pdf",
+      "read_version": "Complete fourteen-page journal paper; relevant formulas, figures and tables visually checked.",
+      "sections": "Methods §2; synthetic comparisons §3.6; ECG §4; human motion §5; limits §6.",
+      "findings": [
+        "Centered windows and normalized headings feed a circular network trained without phase labels.",
+        "Synthetic error SD is .047–.049 radians. Baselines receive one PCA channel; the network receives two channels and headings.",
+        "ECG and upper-limb tests are qualitative; human split is ten training and two unseen participants.",
+        "Reported short support excludes preprocessing. The printed synthetic formulas may have a period typo; code was not audited.",
+        "Project77 labels reference [22] a dual autoencoder, but that is this progression-network paper; its actual dual-autoencoder reference is [13], from 2017."
+      ]
+    },
+    {
+      "id": "Makihara2014",
+      "source": "https://omilab.naist.jp/papers/SP2014-PhaseEstimation.pdf",
+      "read_version": "Complete fourteen-page journal paper, including references and biographies.",
+      "metadata": "IEEE TSP 62(8), 2066–2079, 15 April 2014; DOI 10.1109/TSP.2014.2306174. The 2018 date previously mentioned in our discussion was incorrect.",
+      "sections": "Phase optimization §§III–IV; bias correction §V; evaluation §VI; limitations §§VII–VIII.",
+      "findings": [
+        "One-record period estimation and self-DTW produce correspondences; global monotone optimization estimates phase.",
+        "Bias correction assumes that within-cycle warp fluctuations average to zero across cycles.",
+        "The presented method is offline and uses a period-range prior.",
+        "Synthetic phase ground truth supports evaluation. Real vision examples illustrate registration without labeled phase-error scores."
+      ]
+    },
+    {
+      "id": "Wang2026",
+      "source": "https://www.techscience.com/cmc/v87n3/66978/html",
+      "pdf": "https://cdn.techscience.cn/files/cmc/2026/TSP_CMC-87-3/TSP_CMC_77791/TSP_CMC_77791.pdf",
+      "read_version": "Complete methods, results and discussion; PDF tables checked separately.",
+      "sections": "Template fitting §§3–4; evaluation §5; limitations §6.",
+      "findings": [
+        "Tibial angular velocity supports template fitting of phase, time scale, amplitude and offset.",
+        "Table 2, p.15 measures trajectory forecasting; Table 3, p.16 measures event timing, not circular phase RMSE.",
+        "The 70/30 split is not explicitly subject-disjoint.",
+        "Online solver details are unclear: §4.1.3, p.9 describes least squares; §5.2, p.13 excludes iterative optimization. These are not necessarily contradictory.",
+        "A short-horizon ablation narrative is inconsistent with the table; avoid claiming uniform ablation improvement."
+      ]
+    },
+    {
+      "id": "ChaHur2026",
+      "source": "https://arxiv.org/html/2610.03931v1",
+      "read_version": "Complete preprint, including methods, results and discussion.",
+      "sections": "Matching §2.2; online protocol §4.2; results and limitations §5.",
+      "findings": [
+        "Matches four joint-angle histories to 28 speed-indexed circular templates.",
+        "PCA models population-derived speed deformations; calibration comprises three speeds, with three 30-second online calibration trials.",
+        "Offline phase RMSE improves from 1.78% to 1.61%. Single-participant online results do not establish corrected pairwise significance.",
+        "Online trials use constant speeds; matching runtime excludes the full IMU pipeline.",
+        "This PCA acts on shape deviations, not Hankel windows."
+      ]
+    }
+  ]
+}

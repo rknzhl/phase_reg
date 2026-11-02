@@ -1,0 +1,99 @@
+Project77: causal phase estimation under cadence changes
+
+Research question
+Choose enough past data to distinguish similar phases, while avoiding the phase
+bias produced by cadence changes inside a fixed-length delay window.
+
+End-to-end task
+Input: one calibration cycle with given boundaries, followed by a scalar sensor
+stream for the same type of cyclic motion. In the Project77 application the
+scalar is the tri-axial acceleration magnitude minus gravity.
+Output: current phase, relative to the calibration cycle, at the END of each
+causal window. Uniform phase along the calibration cycle fixes the convention.
+No future observations, test labels, test-time phase alignment, or fitting of
+PCA to the test recording are permitted.
+
+The initial problem class keeps the basic cycle shape approximately stable.
+Cadence is positive and lies in a prescribed range. Locally constant cadence
+is an approximation, not an assumption of arbitrary time-warp invariance.
+Faster changes inside the window are explicit stress tests. A stop, a new
+movement class, or an exactly unobservable full-cycle symmetry requires a
+separate output policy; this experiment does not solve these cases.
+
+Method under study
+Retain Hankel windows, PCA and circular Nadaraya-Watson smoothing. Freeze the
+calibrated model to isolate inference. Build circular shifts and tempo-scaled
+windows from the smoothed calibration waveform. Use the same PCA basis for
+the fixed-tempo and multiple-tempo decoders. Investigate window selection
+based on phase ambiguity and mismatch to the locally constant-tempo model.
+Adaptive window selection is a research target, NOT implemented by this pilot.
+
+Meaningful baselines
+1. Frozen nearest-curve inference at the calibration cadence.
+2. Frozen nearest-template inference with a cadence bank.
+3. A cyclic causal min-sum alignment of the scalar calibration waveform.
+The third is one concrete online time-alignment baseline, not a reproduction
+of every standard DTW variant. It starts at the FIRST raw test sample.
+The full self-updating notebook07 estimator is not compared in this pilot.
+
+Protocol
+Independent noisy calibration and test realizations. Five fixed random seeds.
+The main benchmark fixes a half-cycle raw window, p=8 and the same PCA basis
+for both template decoders. PCA is fitted only to synthetic windows derived
+from the calibration cycle. One raw cycle cannot supply a full cycle of
+ordinary half-cycle windows, so the periodic extension is explicit.
+The unseen constant cadence 1.575 is between bank values 1.55 and 1.60.
+The window sweep evaluates identical raw endpoints across all window sizes.
+Scores: circular mean/p95 error, fraction above 90 degrees, and cycle drift.
+The estimates are causal endpoints; the sequence is not guaranteed monotone.
+
+Tested hypotheses
+H1: fixed-cadence window matching is biased at new cadences.
+Status: SUPPORTED ON THE SPECIFIED SYNTHETIC BENCHMARK.
+H2: cadence-conditioned matching removes much of this bias for slowly varying
+cadence. Status: SUPPORTED ON THE SPECIFIED SYNTHETIC BENCHMARK.
+H3: adding a short causal min-sum path always improves window matching.
+Status: NOT SUPPORTED; it sometimes slightly increases error.
+H4: a longer window is always better.
+Status: REFUTED on the fast-tempo test.
+H5: a shorter window is always better.
+Status: REFUTED on the nearly symmetric constant-cadence test.
+H6: the cadence bank is uniformly better than scalar online alignment.
+Status: REFUTED on the fast-tempo test.
+These are experimental statuses, not mathematical theorem verification.
+
+Scientific contribution to establish
+Derive and test a window-selection rule that distinguishes phase ambiguity
+from local tempo-model mismatch. Compare it to fixed windows and causal time
+alignment on held-out records. A theoretical result should address conditions
+for joint phase/tempo identifiability and the ambiguity-versus-history tradeoff,
+not only the perturbation of an already phase-preserving PCA projection.
+No mathematical novelty is established by this pilot.
+
+Real-data limitation
+The repository CSVs contain no independently annotated continuous phase or
+heel strikes. Their phase error cannot be asserted from this benchmark.
+Acceleration at a new physical cadence also changes amplitude and shape;
+pure resampling is only the controlled starting model. A tempo-plus-gain
+stress test exposes this limitation but is not a physical IMU simulator.
+
+Closest checked work
+Wang et al., 2026, Efficient Gait Phase Estimation and Trajectory Prediction
+in Wearable Devices Using a Dual-Stage Approach, section 4.1.2-4.1.3.
+Time-scale, phase, amplitude and offset fitting already exist:
+https://www.techscience.com/cmc/v87n3/66978/html
+Choi et al., 2022, Unsupervised Gait Phase Estimation With Domain-Adversarial
+Neural Network and Adaptive Window. The primary abstract explicitly includes
+an adaptive window accounting for changes in stride time:
+https://pubmed.ncbi.nlm.nih.gov/34941536/
+Cha and Hur, October 2026, Sparse Calibration-Based Personalization of
+Kernel-Based Gait Phase and Speed Estimation Using Wearable IMUs.
+The primary indexed abstract describes three calibration speeds and a PC
+deviation model. Full text was unavailable in the browsing tool:
+https://arxiv.org/abs/2610.03931
+Thus neither a tempo bank nor the general phrase 'adaptive window' is new.
+
+Reproduction from 2021-Project77
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ../.venv/bin/python code/experiments/phase_tempo_benchmark.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 ../.venv/bin/python code/experiments/phase_window_sweep.py
+Results: metrics.json, window_sweep.json, comparison.png, report.txt.
